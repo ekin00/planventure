@@ -193,9 +193,14 @@ Review, accept changes, and restart the Flask server.
 To have Flask automatically reload on code changes:
 
 ```bash
-export FLASK_DEBUG=1
-flask run
+#BTW
+
+.\venv\Scripts\Activate.ps1
+$env:FLASK_DEBUG = "1"
+python -m flask --app app run
 ```
+
+(!) The setting lasts for that terminal session. To turn debug mode off, set it to "0" or open a new terminal.
 
 ### Authentication Middleware
 
@@ -204,6 +209,14 @@ In Copilot Edits, type:
 ```
 Create auth middleware to protect routes
 ```
+
+smoke test
+
+```
+python -c "import flask, flask_jwt_extended; print('Flask and JWT dependencies are available')"
+```
+
+#BTW: it’s running with the (venv) environment active. python -c "import sys; print(sys.executable)" to target venv
 
 Review and accept the changes.
 

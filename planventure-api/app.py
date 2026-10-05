@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_cors import CORS
 
+from auth_middleware import register_auth_middleware
 from auth_routes import auth_bp
 from extensions import db, jwt
 
@@ -23,6 +24,7 @@ db.init_app(app)
 jwt.init_app(app)
 CORS(app)
 app.register_blueprint(auth_bp)
+register_auth_middleware(app)
 
 @app.route('/')
 def home():
