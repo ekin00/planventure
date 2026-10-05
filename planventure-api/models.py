@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
+# password stuffs
+import bcrypt
 
-from app import db
+from extensions import db
 
 
 class User(db.Model):
@@ -21,6 +23,16 @@ class User(db.Model):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+
+    def set_password(self, password):
+        self.password_hash = bcrypt.hashpw(
+            password.encode("utf-8"), bcrypt.gensalt()
+        ).decode("utf-8")
+
+    def check_password(self, password):
+        return bcrypt.checkpw(
+            password.encode("utf-8"), self.password_hash.encode("utf-8")
+        )
 
 
 class Trip(db.Model):

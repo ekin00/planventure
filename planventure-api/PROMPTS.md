@@ -127,6 +127,9 @@ Review, accept changes, and install required packages:
 
 ```bash
 pip install bcrypt
+#BTW
+ .\venv\scripts\python.exe -m pip install bcrypt
+Requirement already satisfied: bcrypt in .\venv\Lib\site-packages (4.3.0)
 ```
 
 ### JWT Token Functions
@@ -137,10 +140,12 @@ In Copilot Edits, type:
 Setup JWT token generation and validation functions
 ```
 
+moidfy app.py and create auth_utils.py
+
 Review, accept changes, and install the JWT package:
 
 ```bash
-pip install flask-jwt-extended
+ .\venv\scripts\python.exe -m pip install flask-jwt-extended
 ```
 
 ### Registration Route
@@ -151,11 +156,13 @@ In Copilot Edits, type:
 Create auth routes for user registration with email validation
 ```
 
+#BTW 5 files changed. requirments.txt add email-validator
+
 Review and accept the changes.
 
 ### Test Registration Route
 
-Use Bruno API Client:
+Use: Bruno API Client
 
 1. Create a new POST request
 2. Set URL to `http://localhost:5000/auth/register`
