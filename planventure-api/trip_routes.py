@@ -6,7 +6,7 @@ from extensions import db
 from models import Trip
 
 
-trip_bp = Blueprint("trip", __name__, url_prefix="/trip")
+trip_bp = Blueprint("trip", __name__, url_prefix="/api/trips")
 
 
 def generate_default_itinerary(start_date, end_date):
