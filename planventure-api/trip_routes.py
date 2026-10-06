@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from flask import Blueprint, g, jsonify, request
 
@@ -7,6 +7,15 @@ from models import Trip
 
 
 trip_bp = Blueprint("trip", __name__, url_prefix="/trip")
+
+
+def generate_default_itinerary(start_date, end_date):
+    itinerary = []
+    current_date = start_date
+    while current_date <= end_date:
+        itinerary.append({"date": current_date.isoformat(), "activities": []})
+        current_date += timedelta(days=1)
+    return itinerary
 
 
 def _trip_to_dict(trip):
@@ -79,6 +88,11 @@ def trips():
     values, error = _parse_trip_payload(request.get_json(silent=True))
     if error:
         return jsonify({"error": error}), 400
+
+    if "itinerary" not in values:
+        values["itinerary"] = generate_default_itinerary(
+            values["start_date"], values["end_date"]
+        )
 
     trip = Trip(user_id=int(g.current_user_id), **values)
     db.session.add(trip)

@@ -1,0 +1,29 @@
+info:
+  name: createtrip
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:5000/trip
+  headers:
+    - name: Content-Type
+      value: application/json
+    - name: Authorization
+      value: Bearer REPLACE_WITH_VALID_JWT_TOKEN
+  body:
+    type: json
+    data: |-
+      {
+        "destination": "Tokyo, Japan",
+        "start_date": "2026-11-01",
+        "end_date": "2026-11-07",
+        "latitude": 35.6762,
+        "longitude": 139.6503
+      }
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

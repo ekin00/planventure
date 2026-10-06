@@ -197,7 +197,10 @@ To have Flask automatically reload on code changes:
 
 .\venv\Scripts\Activate.ps1
 $env:FLASK_DEBUG = "1"
-python -m flask --app app run
+.\venv\Scripts\python.exe -m flask --app app run
+
+#BTW with debug on
+.\venv\Scripts\python.exe -m flask --app app run --debug --port 5000
 ```
 
 (!) The setting lasts for that terminal session. To turn debug mode off, set it to "0" or open a new terminal.
@@ -253,6 +256,7 @@ In Copilot Edits, type:
 Create function to generate default itinerary template
 ```
 
+(?) itinerary template(?)
 Review, accept changes, and test the updated route.
 
 ## Step 5: Finalize API
