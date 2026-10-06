@@ -7,6 +7,7 @@ from flask_cors import CORS
 from auth_middleware import register_auth_middleware
 from auth_routes import auth_bp
 from extensions import db, jwt
+from trip_routes import trip_bp
 
 load_dotenv()
 
@@ -24,6 +25,7 @@ db.init_app(app)
 jwt.init_app(app)
 CORS(app)
 app.register_blueprint(auth_bp)
+app.register_blueprint(trip_bp)
 register_auth_middleware(app)
 
 @app.route('/')

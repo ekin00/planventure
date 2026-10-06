@@ -11,5 +11,6 @@ def register_auth_middleware(app):
         if request.endpoint is None or request.endpoint in PUBLIC_ENDPOINTS:
             return None
 
-        verify_jwt_in_request()
+        # BTW manually set verify_jwt_in_request()
+        verify_jwt_in_request(optional=True)
         g.current_user_id = get_jwt_identity()
