@@ -1,8 +1,10 @@
 import os
+from datetime import datetime, timezone
 
 from dotenv import load_dotenv
 from flask import Flask, jsonify
 from flask_cors import CORS
+from sqlalchemy import text
 
 from auth_middleware import register_auth_middleware
 from auth_routes import auth_bp
@@ -48,7 +50,20 @@ def home():
 
 @app.route('/health')
 def health_check():
-    return jsonify({"status": "healthy"})
+    """Basic health check - reports API status and database connectivity."""
+    try:
+        db.session.execute(text("SELECT 1"))
+        db_status = "connected"
+    except Exception:
+        db.session.rollback()
+        db_status = "unavailable"
+
+    healthy = db_status == "connected"
+    return jsonify({
+        "status": "healthy" if healthy else "unhealthy",
+        "database": db_status,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }), 200 if healthy else 503
 
 if __name__ == '__main__':
     app.run(debug=True)
