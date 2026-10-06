@@ -269,6 +269,8 @@ In Copilot Edits, type:
 Setup CORS configuration for React frontend
 ```
 
+#BTW: configuring the backend server to explicitly allow requests from your React frontend.
+
 Review and accept the changes.
 
 ### Add Health Check Endpoint
