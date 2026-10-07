@@ -1,85 +1,56 @@
-from email_validator import EmailNotValidError, validate_email
+import re
+
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import IntegrityError
 
-from auth_utils import generate_access_token
 from extensions import db
 from models import User
 
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
+# Names like "GUEST", "GUEST6", "GUEST42" are system-generated for walk-in
+# users, so nobody may join with one.
+RESERVED_NAME_PATTERN = re.compile(r"^GUEST\d*$")
+RESERVED_NAME_MESSAGE = "GUEST names are reserved — pick another name!"
 
-@auth_bp.post("/register")
-def register():
+
+@auth_bp.post("/join")
+def join():
+    """Find-or-create a user by name. No name -> auto-assign GUEST{id}."""
     payload = request.get_json(silent=True)
-    if not isinstance(payload, dict):
+    if payload is not None and not isinstance(payload, dict):
         return jsonify({"error": "A JSON request body is required."}), 400
 
-    email = payload.get("email")
-    password = payload.get("password")
-    if not isinstance(email, str) or not isinstance(password, str):
-        return jsonify({"error": "Email and password are required."}), 400
+    raw_name = (payload or {}).get("name")
+    if raw_name is not None and not isinstance(raw_name, str):
+        return jsonify({"error": "name must be a string."}), 400
 
-    try:
-        email = validate_email(
-            email.strip(), check_deliverability=False
-        ).normalized.lower()
-    except EmailNotValidError:
-        return jsonify({"error": "A valid email address is required."}), 400
+    name = raw_name.strip().upper() if isinstance(raw_name, str) else ""
 
-    password_length = len(password.encode("utf-8"))
-    if password_length < 8 or password_length > 72:
-        return jsonify(
-            {"error": "Password must be between 8 and 72 bytes."}
-        ), 400
+    # Reserved-name check happens before any DB lookup, so GUEST names can
+    # never be created or joined, whether or not the id exists yet.
+    if name and RESERVED_NAME_PATTERN.match(name):
+        return jsonify({"error": RESERVED_NAME_MESSAGE}), 400
 
-    if User.query.filter_by(email=email).first():
-        return jsonify({"error": "An account with that email already exists."}), 409
+    if name:
+        user = User.query.filter_by(name=name).first()
+        if user is not None:
+            return jsonify({"id": user.id, "name": user.name}), 200
 
-    user = User(email=email)
-    user.set_password(password)
+    user = User(name=name or "PENDING")
     db.session.add(user)
-
     try:
+        db.session.flush()  # assign the id
+        if not name:
+            user.name = f"GUEST{user.id}"
         db.session.commit()
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"error": "An account with that email already exists."}), 409
+        # Lost a race with a concurrent join of the same name.
+        user = User.query.filter_by(name=name).first()
+        if user is None:
+            return jsonify({"error": "Could not create user."}), 500
+        return jsonify({"id": user.id, "name": user.name}), 200
 
-    return jsonify({"id": user.id, "email": user.email}), 201
-
-#BTW created from prompt "Create login route with JWT token generation"
-@auth_bp.post("/login")
-def login():
-    payload = request.get_json(silent=True)
-    if not isinstance(payload, dict):
-        return jsonify({"error": "A JSON request body is required."}), 400
-
-    email = payload.get("email")
-    password = payload.get("password")
-    if not isinstance(email, str) or not isinstance(password, str):
-        return jsonify({"error": "Email and password are required."}), 400
-
-    try:
-        email = validate_email(
-            email.strip(), check_deliverability=False
-        ).normalized.lower()
-    except EmailNotValidError:
-        return jsonify({"error": "Invalid email or password."}), 401
-
-    user = User.query.filter_by(email=email).first()
-    try:
-        password_matches = user is not None and user.check_password(password)
-    except ValueError:
-        password_matches = False
-
-    if not password_matches:
-        return jsonify({"error": "Invalid email or password."}), 401
-
-    return jsonify(
-        {
-            "access_token": generate_access_token(user.id),
-            "token_type": "Bearer",
-        }
-    ), 200
+    return jsonify({"id": user.id, "name": user.name}), 201

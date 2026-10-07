@@ -1,14 +1,14 @@
-import { AppBar, Box, Toolbar, Typography, Button, Stack } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, user, logout } = useAuth();
 
-  const handleLogout = () => {
+  const handleSwitchUser = () => {
     logout();
-    navigate('/');
+    navigate('/welcome');
   };
 
   return (
@@ -22,9 +22,12 @@ const Navbar = () => {
         >
           Planventure
         </Typography>
-        <Stack direction="row" spacing={2}>
+        <Stack direction="row" spacing={2} alignItems="center">
           {isAuthenticated ? (
             <>
+              <Typography variant="body1">
+                Welcome, {user?.name}
+              </Typography>
               <Button 
                 color="inherit" 
                 onClick={() => navigate('/trips')}
@@ -34,29 +37,19 @@ const Navbar = () => {
               <Button 
                 color="inherit" 
                 variant="outlined" 
-                onClick={handleLogout}
+                onClick={handleSwitchUser}
                 sx={{ borderColor: 'inherit' }}
               >
-                Logout
+                Switch User
               </Button>
             </>
           ) : (
-            <>
-              <Button 
-                color="inherit" 
-                onClick={() => navigate('/login')}
-              >
-                Login
-              </Button>
-              <Button 
-                color="inherit" 
-                variant="outlined" 
-                onClick={() => navigate('/signup')}
-                sx={{ borderColor: 'inherit' }}
-              >
-                Sign Up
-              </Button>
-            </>
+            <Button 
+              color="inherit" 
+              onClick={() => navigate('/welcome')}
+            >
+              Get Started
+            </Button>
           )}
         </Stack>
       </Toolbar>

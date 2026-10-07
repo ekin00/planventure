@@ -9,8 +9,8 @@ http:
   headers:
     - name: Content-Type
       value: application/json
-    - name: Authorization
-      value: Bearer REPLACE_WITH_VALID_JWT_TOKEN
+    - name: X-User-Id
+      value: "1"
   body:
     type: json
     data: |-

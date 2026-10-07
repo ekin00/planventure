@@ -47,7 +47,7 @@ const Home = () => {
         <Button 
           variant="contained" 
           size="large"
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/welcome')}
           sx={{ mt: 2 }}
         >
           Get Started

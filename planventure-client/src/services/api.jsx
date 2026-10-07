@@ -1,18 +1,26 @@
 const BASE_URL = 'http://localhost:5000';
 
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('token');
+  const stored = localStorage.getItem('user');
+  let userId = '';
+  if (stored) {
+    try {
+      userId = JSON.parse(stored).id ?? '';
+    } catch {
+      localStorage.removeItem('user');
+    }
+  }
   return {
     'Content-Type': 'application/json',
-    'Authorization': token ? `Bearer ${token}` : '',
+    'X-User-Id': userId,
   };
 };
 
 const handleResponse = async (response) => {
   if (response.status === 401) {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
-    throw new Error('Session expired. Please login again.');
+    localStorage.removeItem('user');
+    window.location.href = '/welcome';
+    throw new Error('Unknown user. Please join again.');
   }
 
   if (response.status === 404) {
@@ -72,12 +80,8 @@ export const api = {
   },
 
   auth: {
-    login: async (credentials) => {
-      return api.post('/auth/login', credentials);
-    },
-
-    register: async (userData) => {
-      return api.post('/auth/register', userData);
+    join: async (data) => {
+      return api.post('/auth/join', data);
     }
   }
 };

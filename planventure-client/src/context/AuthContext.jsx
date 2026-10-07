@@ -3,37 +3,35 @@ import { createContext, useContext, useState, useEffect } from 'react';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState(null);
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check for token in localStorage on initial load
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken);
-      setIsAuthenticated(true);
+    // Check for a stored user on initial load
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
 
-  const login = (authData) => {
-    // Handle the new response structure
-    const token = authData.access_token;
-    localStorage.setItem('token', token);
-    setToken(token);
-    setIsAuthenticated(true);
+  const login = (userData) => {
+    localStorage.setItem('user', JSON.stringify(userData));
+    setUser(userData);
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setIsAuthenticated(false);
+    localStorage.removeItem('user');
+    setUser(null);
   };
 
   const value = {
-    isAuthenticated,
-    token,
+    isAuthenticated: !!user,
+    user,
     loading,
     login,
     logout

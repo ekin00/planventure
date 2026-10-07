@@ -8,7 +8,7 @@ from sqlalchemy import text
 
 from auth_middleware import register_auth_middleware
 from auth_routes import auth_bp
-from extensions import db, jwt
+from extensions import db
 from trip_routes import trip_bp
 
 load_dotenv()
@@ -19,7 +19,6 @@ if database_url == "your-sqldatabase-url-here":
     database_url = "sqlite:///planventure.db"
 
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev")
-app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", app.config["SECRET_KEY"])
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
@@ -28,14 +27,13 @@ frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
 allowed_origins = [origin.strip() for origin in frontend_url.split(",") if origin.strip()]
 
 db.init_app(app)
-jwt.init_app(app)
 CORS(
     app,
     resources={
         r"/*": {
             "origins": allowed_origins,
             "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-            "allow_headers": ["Content-Type", "Authorization"],
+            "allow_headers": ["Content-Type", "X-User-Id"],
             "supports_credentials": True,
         }
     },

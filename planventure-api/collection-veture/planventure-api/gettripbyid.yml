@@ -7,8 +7,8 @@ http:
   method: GET
   url: http://localhost:5000/api/trips/1
   headers:
-    - name: Authorization
-      value: Bearer REPLACE_WITH_VALID_JWT_TOKEN
+    - name: X-User-Id
+      value: "1"
 
 settings:
   encodeUrl: true
