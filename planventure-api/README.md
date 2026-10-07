@@ -42,7 +42,7 @@ planventure-api/
 
 ```bash
 git clone <repo-url>
-cd planventure/planventure-api
+cd planventure-api
 ```
 
 ### 2. Create a virtual environment
@@ -85,12 +85,12 @@ DATABASE_URL=sqlite:///planventure.db
 FRONTEND_URL=http://localhost:3000
 ```
 
-| Variable         | Default                    | Description                                            |
-| ---------------- | -------------------------- | ------------------------------------------------------ |
-| `SECRET_KEY`     | `dev`                      | Flask secret key                                       |
-| `JWT_SECRET_KEY` | falls back to `SECRET_KEY` | Signing key for JWT tokens                             |
-| `DATABASE_URL`   | `sqlite:///planventure.db` | SQLAlchemy database URL                                |
-| `FRONTEND_URL`   | `http://localhost:3000`    | Allowed CORS origin(s); comma-separated for multiple   |
+| Variable         | Default                    | Description                                          |
+| ---------------- | -------------------------- | ---------------------------------------------------- |
+| `SECRET_KEY`     | `dev`                      | Flask secret key                                     |
+| `JWT_SECRET_KEY` | falls back to `SECRET_KEY` | Signing key for JWT tokens                           |
+| `DATABASE_URL`   | `sqlite:///planventure.db` | SQLAlchemy database URL                              |
+| `FRONTEND_URL`   | `http://localhost:3000`    | Allowed CORS origin(s); comma-separated for multiple |
 
 ### 5. Initialize the database
 
@@ -179,10 +179,10 @@ Obtain a token from `POST /auth/login`.
 
 ### Public Endpoints
 
-| Method | Endpoint  | Description                                  |
-| ------ | --------- | -------------------------------------------- |
-| GET    | `/`       | Welcome message                              |
-| GET    | `/health` | Health check (API status + DB connectivity)  |
+| Method | Endpoint  | Description                                 |
+| ------ | --------- | ------------------------------------------- |
+| GET    | `/`       | Welcome message                             |
+| GET    | `/health` | Health check (API status + DB connectivity) |
 
 ### Auth
 
@@ -222,9 +222,7 @@ Returns all trips for the current user:
     "end_date": "2026-11-07",
     "latitude": 35.6762,
     "longitude": 139.6503,
-    "itinerary": [
-      { "date": "2026-11-01", "activities": [] }
-    ]
+    "itinerary": [{ "date": "2026-11-01", "activities": [] }]
   }
 ]
 ```
@@ -306,13 +304,13 @@ Invoke-RestMethod -Uri http://localhost:5000/trip/1 `
 
 ### User
 
-| Field           | Type         | Notes                    |
-| --------------- | ------------ | ------------------------ |
-| `id`            | Integer (PK) |                          |
-| `email`         | String(255)  | unique, indexed          |
-| `password_hash` | String(255)  | bcrypt hash              |
-| `created_at`    | DateTime     | UTC                      |
-| `updated_at`    | DateTime     | UTC, auto-updated        |
+| Field           | Type         | Notes             |
+| --------------- | ------------ | ----------------- |
+| `id`            | Integer (PK) |                   |
+| `email`         | String(255)  | unique, indexed   |
+| `password_hash` | String(255)  | bcrypt hash       |
+| `created_at`    | DateTime     | UTC               |
+| `updated_at`    | DateTime     | UTC, auto-updated |
 
 ### Trip
 

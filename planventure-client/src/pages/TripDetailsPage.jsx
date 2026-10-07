@@ -58,6 +58,15 @@ const TripDetailsPage = () => {
         }
 
         setTrip(response.trip);
+
+        // Convert backend itinerary list [{date, activities}] to object keyed by date
+        const itineraryByDate = (response.trip.itinerary || []).reduce((acc, day) => {
+          if (day && day.date) {
+            acc[day.date] = day.activities || [];
+          }
+          return acc;
+        }, {});
+        setItinerary(itineraryByDate);
       } catch (err) {
         console.error('Error fetching trip:', err);
         setError(err.message || 'Failed to load trip details');
@@ -75,27 +84,47 @@ const TripDetailsPage = () => {
     setTabValue(newValue);
   };
 
+  // Convert object keyed by date to backend list format [{date, activities}]
+  const persistItinerary = async (newItinerary) => {
+    try {
+      const payload = Object.entries(newItinerary).map(([date, activities]) => ({
+        date,
+        activities
+      }));
+      await tripService.updateItinerary(tripId, payload);
+    } catch (err) {
+      console.error('Failed to save itinerary:', err);
+      setError(err.message || 'Failed to save itinerary changes');
+    }
+  };
+
   const handleAddSlot = (date, newSlot) => {
-    setItinerary(prev => ({
-      ...prev,
-      [date]: [...(prev[date] || []), newSlot]
-    }));
+    const updated = {
+      ...itinerary,
+      [date]: [...(itinerary[date] || []), newSlot]
+    };
+    setItinerary(updated);
+    persistItinerary(updated);
   };
 
   const handleUpdateSlot = (date, updatedSlot) => {
-    setItinerary(prev => ({
-      ...prev,
-      [date]: prev[date].map(slot => 
+    const updated = {
+      ...itinerary,
+      [date]: itinerary[date].map(slot =>
         slot.id === updatedSlot.id ? updatedSlot : slot
       )
-    }));
+    };
+    setItinerary(updated);
+    persistItinerary(updated);
   };
 
   const handleDeleteSlot = (date, slotId) => {
-    setItinerary(prev => ({
-      ...prev,
-      [date]: prev[date].filter(slot => slot.id !== slotId)
-    }));
+    const updated = {
+      ...itinerary,
+      [date]: itinerary[date].filter(slot => slot.id !== slotId)
+    };
+    setItinerary(updated);
+    persistItinerary(updated);
   };
 
   const handleCreateEmptyItinerary = () => {

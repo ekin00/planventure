@@ -61,6 +61,16 @@ export const tripService = {
     }
   },
 
+  updateItinerary: async (tripId, itinerary) => {
+    try {
+      const response = await api.patch(`/api/trips/${tripId}`, { itinerary });
+      return response;
+    } catch (error) {
+      console.error('Error in updateItinerary:', error);
+      throw new Error(error.message || 'Failed to save itinerary');
+    }
+  },
+
   deleteTrip: async (tripId) => {
     try {
       const response = await api.delete(`/api/trips/${tripId}`);
