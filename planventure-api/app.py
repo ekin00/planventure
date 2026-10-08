@@ -22,9 +22,13 @@ app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev")
 app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
-# CORS configuration for the React frontend
+# CORS configuration for the React frontend, only if .env didn't specify FRONTEND_URL otherwise default to 3000
 frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
 allowed_origins = [origin.strip() for origin in frontend_url.split(",") if origin.strip()]
+
+app.logger.info("CONFIG allowed_origins=%s", allowed_origins)
+
+app.logger.info("CONFIG full=%s", {k: v for k, v in sorted(app.config.items()) if "KEY" not in k and "URI" not in k})
 
 db.init_app(app)
 CORS(
