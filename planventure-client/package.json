@@ -12,16 +12,18 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
-    "@mui/icons-material": "^6.2.0",
-    "@mui/material": "^6.2.0",
+    "@mui/icons-material": "^7.3.11",
+    "@mui/material": "^7.3.11",
     "@mui/x-date-pickers": "^7.29.4",
     "dayjs": "^1.11.23",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-is": "^18.3.1",
     "react-router-dom": "^7.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@mui/codemod": "^5.15.10",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.4",
